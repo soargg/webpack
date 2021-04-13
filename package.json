@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "rm -rf ./lib && rollup -c",
-    "tsc": "rm -rf ./base && tsc"
+    "tsc": "rm -rf ./base && tsc",
+    "start": "npm run tsc && node ./index.js" 
   },
   "devDependencies": {
     "@babel/types": "^7.13.14",

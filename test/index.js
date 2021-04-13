@@ -1,2 +1,2 @@
-import { hello } from './utils';
+import { hello } from './utils/index.js';
 hello();

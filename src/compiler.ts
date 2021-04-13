@@ -1,5 +1,5 @@
 import path = require('path');
-import fs = require('fs');
+// import fs = require('fs');
 import { getAst, getDependecies, getCode } from './parser';
 
 export type CompilerConfig = {
@@ -24,16 +24,45 @@ export class Compiler {
     }
 
     run() {
-        const ast = getAst(this.entry);
-        const dependecies = getDependecies(ast, this.entry);
-        const code = getCode(ast);
-
-        fs.writeFileSync(this.output, code);
-
-        console.log(dependecies);
+        const dependencyGraph = this.build(this.entry);
+        console.log(dependencyGraph);
     }
 
     generate() {
         
+    }
+
+    private build(filename) {
+        const ast = getAst(filename);
+        const dependecies = getDependecies(ast, filename);
+        const code = getCode(ast);
+
+        this.modules.push({
+            filename,
+            dependecies,
+            code
+        })
+
+        // 判断有依赖对象,递归解析所有依赖项
+        if (dependecies) {
+            for (const dependency in dependecies) {
+                this.build(dependecies[dependency])
+            }
+        }
+
+        // 生成依赖关系图
+        const dependencyGraph = this.modules.reduce(
+            (graph, item) => ({
+                ...graph,
+                // 使用文件路径作为每个模块的唯一标识符,保存对应模块的依赖对象和文件内容
+                [item.filename]: {
+                dependecies: item.dependecies,
+                code: item.code
+                }
+            }),
+            {}
+        );
+
+        return dependencyGraph;
     }
 }

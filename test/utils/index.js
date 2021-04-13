@@ -1,3 +1,5 @@
+import { name } from "./const.js";
+
 export function hello() {
-    console.log('hello world');
+    console.log(name);
 }
